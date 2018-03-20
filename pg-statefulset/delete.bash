@@ -6,5 +6,7 @@ do
 kubectl delete $claim
 done
 kubectl delete pv cl-vol
-kubectl delete service pgsqlsvc
+kubectl delete service pgsql
+kubectl delete deployment phppgadmin
+kubectl delete service phppgadmin
 
