@@ -1,6 +1,10 @@
 #!/bin/bash
 kubectl delete statefulset pgsql
-kubectl delete pvc cl-vol-pgsql-0
+
+kubectl get pvc -o name| while read claim 
+do
+kubectl delete $claim
+done
 kubectl delete pv cl-vol
-kubectl delete service pgsql
+kubectl delete service pgsqlsvc
 

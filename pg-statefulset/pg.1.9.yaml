@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgsqlsvc
+  labels:
+    app: pgsql-database
+spec:
+  ports:
+  - port: 5432
+    name: db
+  clusterIP: None
+  selector:
+    app: pgsql
+---
+apiVersion: "v1"
+kind: "PersistentVolume"
+metadata:
+  name: "cl-vol" 
+spec:
+  capacity:
+    storage: "8Gi" 
+  accessModes:
+    - "ReadWriteOnce"
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  gcePersistentDisk: 
+    fsType: "ext4" 
+    pdName: "cl-gcedisk-pv"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgsql
+spec:
+  serviceName: "pgsql"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pgsql
+  template:
+    metadata:
+      labels:
+        app: pgsql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: postgres
+        image: postgres:9.6
+        env:
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/db-files/"
+        ports:
+        - containerPort: 5432
+          name: db
+        volumeMounts:
+        - name: cl-vol 
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: cl-vol 
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 8Gi
