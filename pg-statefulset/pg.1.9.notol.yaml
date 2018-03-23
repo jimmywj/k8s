@@ -77,19 +77,6 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
-      tolerations:
-      - key: "node.alpha.kubernetes.io/unreachable"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
-      - key: "node.kubernetes.io/unreachable"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
-      - key: "node.kubernetes.io/not-ready"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
   volumeClaimTemplates:
   - metadata:
       name: cl-vol 
