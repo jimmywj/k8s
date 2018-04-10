@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgsql
+  labels:
+    app: pgsql
+spec:
+  ports:
+  - port: 5432
+    name: pgsql
+  clusterIP: None
+  selector:
+    app: pgsql
+---
+apiVersion: "v1"
+kind: "PersistentVolume"
+metadata:
+  name: "cl-vol" 
+spec:
+  capacity:
+    storage: "8Gi" 
+  accessModes:
+    - "ReadWriteOnce"
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: default
+  azureDisk:
+    kind: Managed
+    diskName: azureDisk
+    diskURI: /subscriptions/eda82d75-c735-4a75-a7b5-c69f1cce4327/resourceGroups/MC_rg1_cs1_westeurope/providers/Microsoft.Compute/disks/azureDisk
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgsql
+spec:
+  serviceName: pgsql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgsql
+  template:
+    metadata:
+      labels:
+        app: pgsql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: postgres
+        image: postgres:9.6
+        env:
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/db-files/"
+        ports:
+        - containerPort: 5432
+          name: pgsql
+        volumeMounts:
+        - name: cl-vol
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - exec pg_isready -U postgres -h 127.0.0.1
+          failureThreshold: 3
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - exec pg_isready -U postgres -h 127.0.0.1
+          failureThreshold: 3
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      tolerations:
+      - key: "node.alpha.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+  volumeClaimTemplates:
+  - metadata:
+      name: cl-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: default
+      resources:
+        requests:
+          storage: 8Gi
