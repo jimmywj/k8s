@@ -22,7 +22,7 @@ Then, you can use the following commands to assign the cluster to the name space
 
 You can use kubectl config use-context dev to change the namespace. You may see something like below with kubectl get pods --all-namespaces which 3 deployments as different environment.
 
-Please note that same warning of PV already exist will prompted. Please ignore this.  For the example, I use the same disk image as volume, therefore, with 8G claim, the first two deployments will copy the images and attached to the pod as volume as they are separate volume.  For the last pod, which the disk is not enough the create the PV, therefore azure will dynamic provision a disk with 8G claim and attached to the pod.  Since it is dynamically created, the postgres will have empty data on it.
+Please note that some warning of PV already exist will be prompted. Please ignore this.  On the other hand, same disk image are used as volume, with 8G claim, the first two deployments will copy the images and attached to the pod as volume as they are separate volume.  For the last pod, which the disk is not enough the host the PV, therefore azure will dynamic provision a disk with 8G and attached to the pod.  Since it is dynamically created, the postgres will have empty data on it.
 
 ```
 NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE
