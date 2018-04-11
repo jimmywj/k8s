@@ -27,6 +27,7 @@ spec:
     kind: Managed
     diskName: azureDisk
     diskURI: /subscriptions/eda82d75-c735-4a75-a7b5-c69f1cce4327/resourceGroups/MC_rg1_cs1_westeurope/providers/Microsoft.Compute/disks/azureDisk
+# replace with your subscripton
 ---
 apiVersion: apps/v1
 kind: StatefulSet
