@@ -24,7 +24,7 @@ You can use kubectl config use-context dev to change the namespace. You may see 
 
 Please note that same warning of PV already exist will prompted. Please ignore this.  For the example, I use the same disk image as volume, therefore, with 8G claim, the first two deployments will copy the images and attached to the pod as volume as they are separate volume.  For the last pod, which the disk is not enough the create the PV, therefore azure will dynamic provision a disk with 8G claim and attached to the pod.  Since it is dynamically created, the postgres will have empty data on it.
 
-...
+```
 NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE
 default       pgsql-0                                 1/1       Running   0          4h
 default       phppgadmin-7797845f94-gnblq             1/1       Running   0          4h
@@ -41,4 +41,4 @@ kube-system   kubernetes-dashboard-546f987686-5zrdj   1/1       Running   0     
 kube-system   tunnelfront-66788b49f7-b82pm            1/1       Running   0          1d
 production    pgsql-0                                 1/1       Running   0          36m
 production    phppgadmin-7797845f94-p7bps             1/1       Running   0          36m
-...
+```
